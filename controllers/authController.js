@@ -1,28 +1,33 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const logger = require("../utils/logger");
 require("dotenv").config();
 
+// 📌 Signup API
 const signup = async (req, res) => {
   const { username, email, password } = req.body;
-  console.log("Signup data:", req.body);
+  logger.info("Signup request received", { username, email });
+
   const hashedPassword = await bcrypt.hash(password, 10);
-  console.log("Hashed password:", hashedPassword);
+   logger.debug("Password hashed successfully", { email });
   
   try {
     const userId = await User.create(username, email, hashedPassword);
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    logger.info("User registered successfully", { email, userId });
     res.status(201).json({ token, chut: "Chuttamale💕" });
   } catch (error) {
-    console.error("Signup error:", error); // Log the error
-    res
+    logger.error("Signup error", { email, error: error.message });    res
       .status(400)
       .json({ message: error.message, Temp: "Error in Creating User💚" });
   }
 };
 
+
+// 📌 Login API
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -36,9 +41,10 @@ const login = async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+    logger.info("User logged in successfully", { email, userId: user.id });
     res.json({ token });
   } catch (error) {
-    console.error("Login error:", error);
+    logger.error("Login error", { email, error: error.message });
     res.status(500).json({ message: error.message, Temp: "Login failed" });
   }
 };
