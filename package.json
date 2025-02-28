@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-mysql-jwt-auth",
+  "version": "1.0.0",
+  "description": "Node.js MySQL JWT Authentication REST API Example",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "bezkoder",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.4",
+    "shortid": "^2.2.16"
+  }
+}
