@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-
+app.use("/", urlRoutes);  
 // Log all requests using Morgan and Winston
 
 app.use(

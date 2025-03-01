@@ -26,10 +26,23 @@ const User = {
 
     try {
       const result = await db.query(query, values);
-      return result.rows[0]; // Return the user object, or undefined if not found
+      return result.rows[0] || null ; // Return the user object, or undefined if not found
     } catch (error) {
       console.error("Error finding user by email:", error); // Log the error
       throw new Error("Error finding user in database"); // Throw a generic error
+    }
+  },
+
+  findByUsername: async (username) => {
+    const query = `SELECT * FROM users WHERE username = $1;`;
+    const values = [username];
+
+    try {
+      const result = await db.query(query, values);
+      return result.rows[0] || null; // Return user or null if not found
+    } catch (error) {
+      console.error("Error finding user by username:", error);
+      throw new Error("Error finding user in database");
     }
   },
 };
