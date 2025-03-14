@@ -1,0 +1,23 @@
+-- migrate:up
+-- Update URLs table if needed
+ALTER TABLE urls ADD COLUMN IF NOT EXISTS userId INTEGER REFERENCES users(id);
+ALTER TABLE urls ADD COLUMN IF NOT EXISTS createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE urls ADD COLUMN IF NOT EXISTS click_count INTEGER DEFAULT 0;
+ALTER TABLE urls ADD COLUMN IF NOT EXISTS last_accessed TIMESTAMP;
+
+-- Create user_url_history table
+CREATE TABLE IF NOT EXISTS user_url_history (
+    id SERIAL PRIMARY KEY,
+    userId INTEGER NOT NULL REFERENCES users(id),
+    urlId INTEGER NOT NULL REFERENCES urls(id),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(userId, urlId)
+);
+
+
+-- migrate:down
+DROP TABLE IF EXISTS user_url_history;
+ALTER TABLE urls DROP COLUMN IF EXISTS userId;
+ALTER TABLE urls DROP COLUMN IF EXISTS createdAt;
+ALTER TABLE urls DROP COLUMN IF EXISTS click_count;
+ALTER TABLE urls DROP COLUMN IF EXISTS last_accessed;
