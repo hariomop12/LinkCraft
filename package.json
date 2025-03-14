@@ -19,11 +19,6 @@
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "express-rate-limit": "^7.5.0",
-<<<<<<< HEAD
-=======
-    "express-validator": "^7.2.1",
-    "helmet": "^8.0.0",
->>>>>>> 4eeeba8 (What i did)
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "pg": "^8.13.3",
