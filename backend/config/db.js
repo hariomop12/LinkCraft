@@ -32,7 +32,8 @@ DjPfVj6ahb4xnCIa0+8TU1hwCsaXbAKY/Nf8orYgxXAbXHdauMucQ4lT0XDVkRiT
 hZ+fLOxHAqNTdMDn3B89ztqiDhfcX0GFgfQP6ElItv4UllXlAV8rH/czfVZPQ2KU
 vYgaImv3A2P6TlpwAR/p9c+cZbDahGAlysqGuecx754kZH86zeFCxJQrXBVz6WIp
 2nhTTWDlWSwdYB/AhIvySaRfdqKLhKLmWQvJB1ZlHGtUKzf6Uw==
------END CERTIFICATE-----`,
+-----END CERTIFICATE-----
+`,
   },
 });
 
