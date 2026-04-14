@@ -48,6 +48,19 @@ pool.connect((err, client, done) => {
   }
 });
 
+// health check fucnction
+const checkDB = async() => {
+  try {
+    await pool.query("SELECT 1")
+    return {status : "healthy"}
+  } catch (error) {
+    return {
+      status: "unhealthy",
+      error: err.message,
+    }
+  }
+}
+
 module.exports = {
-  query: (text, params) => pool.query(text, params),
+  query: (text, params) => pool.query(text, params),  checkDB
 };

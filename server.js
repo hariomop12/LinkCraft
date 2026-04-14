@@ -7,6 +7,8 @@ const logger = require("./utils/logger");
 const authRoutes = require("./routes/routes.auth");
 const urlRoutes = require("./routes/routes.url");
 require("dotenv").config();
+const db = require("./config/db.js")
+
 // Initialize express app
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,6 +22,7 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 204,
 };
+
 app.use(cors(corsOptions));
 
 // Rate limiting to protect against brute force/DoS attacks
@@ -30,6 +33,7 @@ const limiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
+
 app.use(limiter);
 
 // Body parsing
@@ -58,18 +62,44 @@ app.use((req, res, next) => {
 });
 
 // Welcome route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to the LinkCraft API" });
-});
-
-// Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/", async (req, res) => {
+    const dbHealth = await db.checkDB()
   res.status(200).json({
+    success: true,
     status: "ok",
+    message: "Welcome to the LinkCraft API 🚀",
+ 
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
+    meta: {
+      version: "1.0.0",
+      environment: process.env.NODE_ENV || "development",
+      uptime: process.uptime(), // seconds
+      timestamp: new Date().toISOString(),
+    },
+
+    author: {
+      name: "Hariom OP",
+      github: "https://github.com/hariomop12",
+    },
+
+    services: {
+      api: "healthy",
+      database: dbHealth,
+    },
+
+
+    docs: {
+      baseUrl: `${req.protocol}://${req.get("host")}`,
+      endpoints: {
+        health: "/health",
+        createLink: "/api/links",
+        getLinks: "/api/links",
+      },
+    },
   });
 });
+
 
 // Route handlers
 app.use("/api/auth", authRoutes);

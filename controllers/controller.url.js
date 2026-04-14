@@ -67,7 +67,6 @@ const redirectToUrl = async (req, res) => {
 };
 
 // Get user's URL history - for authenticated users only
-// Get user's URL history - for authenticated users only
 const getUserUrls = async (req, res) => {
     try {
       const userId = req.user.userId;
