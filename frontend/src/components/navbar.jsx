@@ -6,12 +6,12 @@ function Navbar() {
 
         <ul className="flex gap-6">
           <li>
-            <a href="#" className="hover:text-pink-200 transition">
+            <a href="/login" className="hover:text-pink-200 transition">
               Login
             </a>
           </li>
           <li>
-            <a href="#" className="hover:text-pink-200 transition">
+            <a href="/signup" className="hover:text-pink-200 transition">
               Signup
             </a>
           </li>

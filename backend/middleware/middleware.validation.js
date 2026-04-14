@@ -22,13 +22,17 @@ const validateSignup = [
     .normalizeEmail(),
 
   // Password validation
-  body("password")
-    .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long")
-    .matches(passwordRegex)
-    .withMessage(
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    ),
+ body("password")
+  .isLength({ min: 8 })
+  .withMessage("Password must be at least 8 characters long")
+  .matches(/[a-z]/)
+  .withMessage("Must contain lowercase")
+  .matches(/[A-Z]/)
+  .withMessage("Must contain uppercase")
+  .matches(/\d/)
+  .withMessage("Must contain number")
+  .matches(/[^A-Za-z\d]/)
+  .withMessage("Must contain special character"),
 
   // Validation result handler
   (req, res, next) => {
