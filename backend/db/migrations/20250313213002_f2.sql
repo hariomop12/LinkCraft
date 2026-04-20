@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS urls (
 );
 
 -- Create a table for tracking URL history per user
-CREATE TABLE user_url_history (
+CREATE TABLE IF NOT EXISTS user_url_history (
     id SERIAL PRIMARY KEY,
     userId INTEGER NOT NULL REFERENCES users(id),
     urlId INTEGER NOT NULL REFERENCES urls(id),

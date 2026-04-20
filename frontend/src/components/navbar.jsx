@@ -35,7 +35,7 @@ function Navbar() {
             <>
               <li>
                 <Link to="/dashboard" className="hover:text-pink-200">
-                  Dashboard
+                  User Info 
                 </Link>
               </li>
               <li>

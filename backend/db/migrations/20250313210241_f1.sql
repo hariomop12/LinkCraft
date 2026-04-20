@@ -1,4 +1,4 @@
-
+-- migrate:up
 -- Update existing urls table or create if not exists
 CREATE TABLE IF NOT EXISTS urls (
     id SERIAL PRIMARY KEY,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS urls (
 );
 
 -- Create a table for tracking URL history per user
-CREATE TABLE user_url_history (
+CREATE TABLE IF NOT EXISTS user_url_history (
     id SERIAL PRIMARY KEY,
     userId INTEGER NOT NULL REFERENCES users(id),
     urlId INTEGER NOT NULL REFERENCES urls(id),
@@ -21,4 +21,7 @@ CREATE TABLE user_url_history (
     UNIQUE(userId, urlId)
 );
 
---
+-- migrate:down
+DROP TABLE IF EXISTS urls;
+DROP TABLE IF EXISTS user_url_history;
+ 

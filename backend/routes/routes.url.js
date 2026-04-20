@@ -7,14 +7,14 @@ const {
 const authMiddleware = require("../middleware/middleware.auth");
 const router = express.Router();
 
-// Public routes - anyone can access
+// Public routes
 router.get("/:shortUrl", redirectToUrl);
 
-// Anonymous shortening (no authentication required)
+// Anonymous shortening (can include customCode)
 router.post("/public/shorten", shortenUrl);
 
-// Protected routes - requires authentication
-router.post("/shorten", authMiddleware, shortenUrl); // Auth required, will associate URLs with user
+// Protected routes
+router.post("/shorten", authMiddleware, shortenUrl);
 router.get("/user/history", authMiddleware, getUserUrls);
 
 module.exports = router;

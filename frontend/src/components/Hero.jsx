@@ -2,14 +2,22 @@ import { useState } from "react";
 
 function Hero() {
   const [longUrl, setLongUrl] = useState("");
+  const [customCode, setCustomCode] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const shortenLink = async () => {
     if (!longUrl) return alert("Enter a URL");
 
     try {
       setLoading(true);
+      setError("");
+
+      const payload = {
+        longUrl,
+        ...(customCode && { customCode }), // Only add if provided
+      };
 
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/url/public/shorten`,
@@ -18,27 +26,31 @@ function Hero() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ longUrl }),
+          body: JSON.stringify(payload),
         },
       );
 
-      if (!res.ok) {
-        throw new Error("Server error");
-      }
-
       const data = await res.json();
 
-      setShortUrl(data.fullShortUrl); // better use full url
+      if (!res.ok) {
+        // Handle collision or reserved word error
+        setError(data.message || "Error shortening link");
+        return;
+      }
+
+      setShortUrl(data.fullShortUrl);
+      setLongUrl("");
+      setCustomCode(""); // Clear both inputs after success
     } catch (err) {
       console.error(err);
-      alert("Error shortening link");
+      setError("Error shortening link");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center px-4   mt-20">
+    <div className="flex items-center justify-center px-4 mt-20">
       <div className="flex flex-col lg:flex-row items-center gap-10 max-w-6xl w-full">
         {/* IMAGE */}
         <img
@@ -57,7 +69,7 @@ function Hero() {
             A convenient way to shorten long links and manage your links.
           </p>
 
-          {/* INPUT */}
+          {/* LONG URL INPUT */}
           <input
             type="text"
             value={longUrl}
@@ -65,6 +77,22 @@ function Hero() {
             placeholder="Enter your long URL here..."
             className="mt-6 px-4 py-3 rounded-lg bg-white/10 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
+
+          {/* CUSTOM CODE INPUT */}
+          <input
+            type="text"
+            value={customCode}
+            onChange={(e) => setCustomCode(e.target.value)}
+            placeholder="(Optional) Custom short code - e.g., mylink"
+            className="mt-3 px-4 py-3 rounded-lg bg-white/10 text-white w-full focus:outline-none focus:ring-2 focus:ring-pink-500"
+          />
+
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="mt-3 p-3 bg-red-500/20 text-red-300 rounded-lg text-sm">
+              ⚠️ {error}
+            </div>
+          )}
 
           {/* BUTTON */}
           <button
