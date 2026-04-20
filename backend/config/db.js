@@ -1,5 +1,13 @@
 const { Pool } = require("pg");
-require('dotenv').config();
+require("dotenv").config();
+
+console.log("📌 DB Config:", {
+  user: process.env.DB_USER ? "✓ Set" : "✗ Missing",
+  host: process.env.DB_HOST || "localhost",
+  port: process.env.DB_PORT || "5432",
+  database: process.env.DB_NAME || "LinkCraft",
+});
+
 const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -37,31 +45,27 @@ vYgaImv3A2P6TlpwAR/p9c+cZbDahGAlysqGuecx754kZH86zeFCxJQrXBVz6WIp
   },
 });
 
-// Test the connection
-pool.connect((err, client, done) => {
-  if (err) {
-    console.error("Error connecting to the database.❌", err);
-  } else {
-    console.log("Successfully connected to the database.✅");
-  }
-  if (client) {
-    done(); // Release the connection back to the pool
-  }
+// Don't test connection on startup - just log config
+// Connection will fail gracefully when queries are executed if there's an issue
+pool.on("error", (err) => {
+  console.error("❌ Unexpected error on idle client:", err);
 });
 
 // health check fucnction
-const checkDB = async() => {
+const checkDB = async () => {
   try {
-    await pool.query("SELECT 1")
-    return {status : "healthy"}
+    await pool.query("SELECT 1");
+    return { status: "healthy" };
   } catch (error) {
     return {
       status: "unhealthy",
-      error: err.message,
-    }
+      error: error.message,
+    };
   }
-}
+};
 
 module.exports = {
-  query: (text, params) => pool.query(text, params),  checkDB
+  query: (text, params) => pool.query(text, params),
+  checkDB,
+  getClient: () => pool.connect(),
 };

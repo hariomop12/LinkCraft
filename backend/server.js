@@ -7,7 +7,7 @@ const logger = require("./utils/logger");
 const authRoutes = require("./routes/routes.auth");
 const urlRoutes = require("./routes/routes.url");
 require("dotenv").config();
-const db = require("./config/db.js")
+const db = require("./config/db.js");
 
 // Initialize express app
 const app = express();
@@ -46,7 +46,7 @@ app.use(
     stream: {
       write: (message) => logger.info(message.trim()),
     },
-  })
+  }),
 );
 
 // Set security headers
@@ -56,19 +56,18 @@ app.use((req, res, next) => {
   res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader(
     "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
+    "max-age=31536000; includeSubDomains",
   );
   next();
 });
 
 // Welcome route
 app.get("/", async (req, res) => {
-    const dbHealth = await db.checkDB()
+  const dbHealth = await db.checkDB();
   res.status(200).json({
     success: true,
     status: "ok",
     message: "Welcome to the LinkCraft API 🚀",
- 
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
     meta: {
@@ -77,18 +76,14 @@ app.get("/", async (req, res) => {
       uptime: process.uptime(), // seconds
       timestamp: new Date().toISOString(),
     },
-
     author: {
       name: "Hariom OP",
       github: "https://github.com/hariomop12",
     },
-
     services: {
       api: "healthy",
       database: dbHealth,
     },
-
-
     docs: {
       baseUrl: `${req.protocol}://${req.get("host")}`,
       endpoints: {
@@ -100,6 +95,15 @@ app.get("/", async (req, res) => {
   });
 });
 
+// Health check endpoint
+app.get("/health", async (req, res) => {
+  const dbHealth = await db.checkDB();
+  res.json({
+    status: "ok",
+    db: dbHealth,
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Route handlers
 app.use("/api/auth", authRoutes);
@@ -137,7 +141,7 @@ app.use((err, req, res, next) => {
 
 // Start the server
 if (require.main === module) {
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, "0.0.0.0", () => {
     logger.info(`🚀 Server running in ${NODE_ENV} mode on port ${PORT}`);
     logger.info(`Health check available at: http://localhost:${PORT}/health`);
   });

@@ -6,7 +6,7 @@ import Card from "./components/Crad";
 import Footer from "./components/Fotter";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 function Home() {
   return (

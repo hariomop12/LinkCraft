@@ -1,22 +1,37 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { BarChart3 } from "lucide-react";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const isDashboard = location.pathname === "/dashboard";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/");  
+    localStorage.removeItem("user");
+    navigate("/");
   };
-3
-  return (
-    <div className="px-6 pt-6">
-      <nav className="bg-pink-500 text-white px-6 py-4 flex justify-between items-center rounded-2xl max-w-6xl mx-auto shadow-lg">
-        <Link to="/" className="text-xl font-bold">
-          Link Crafter
-        </Link>
 
+  return (
+    <div className="px-6 pt-6 mb-10">
+      <nav className="bg-pink-500 text-white px-6 py-4 flex justify-between items-center rounded-2xl max-w-6xl mx-auto shadow-lg">
+        {/* LEFT SIDE */}
+        {isDashboard ? (
+          <div className="flex items-center gap-4">
+            <BarChart3 size={28} className="text-white" />
+            <h1 className="m-0 text-2xl font-bold">LinkCraft Dashboard</h1>
+          </div>
+        ) : (
+          <Link to="/" className="text-xl font-bold">
+            Link Crafter
+          </Link>
+        )}
+
+        {/* RIGHT SIDE */}
         <ul className="flex gap-6 items-center">
           {!token ? (
             <>
@@ -33,11 +48,23 @@ function Navbar() {
             </>
           ) : (
             <>
-              <li>
-                <Link to="/dashboard" className="hover:text-pink-200">
-                  User Info 
-                </Link>
-              </li>
+              {isDashboard && (
+                <li
+                  className="font-medium cursor-pointer text-sm"
+                  onClick={() => navigate("/")}
+                >
+                  👤 {user.username || "User"}
+                </li>
+              )}
+
+              {!isDashboard && (
+                <li>
+                  <Link to="/dashboard" className="hover:text-pink-200">
+                    User Info
+                  </Link>
+                </li>
+              )}
+
               <li>
                 <button
                   onClick={handleLogout}

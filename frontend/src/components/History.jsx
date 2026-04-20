@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Copy, ExternalLink, BarChart3 } from "lucide-react";
 
 function History() {
@@ -6,35 +6,40 @@ function History() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      const token = localStorage.getItem("token");
+  const fetchHistory = useCallback(async ({ silent = false } = {}) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-      if (!token) return;
+    try {
+      if (!silent) setLoading(true);
 
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/url/user/history`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/url/user/history`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        },
+      );
 
-        const data = await res.json();
-
-        setUrls(data.urls);
-        setUser(data.user);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHistory();
+      const data = await res.json();
+      setUrls(data.urls || []);
+      setUser(data.user || null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (!silent) setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  useEffect(() => {
+    const interval = setInterval(() => fetchHistory({ silent: true }), 5000);
+    return () => clearInterval(interval);
+  }, [fetchHistory]);
 
   if (loading) {
     return <p className="text-center text-gray-400 mt-10">Loading...</p>;

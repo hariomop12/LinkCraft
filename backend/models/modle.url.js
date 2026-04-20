@@ -32,6 +32,32 @@ class Url {
     return pattern.test(code);
   }
 
+  // ✅ GET GLOBAL STATS (IMPORTANT)
+  static async getUserStats(userId) {
+    try {
+      const query = `
+      SELECT 
+        COUNT(*) AS total_urls,
+        COALESCE(SUM(click_count), 0) AS total_clicks,
+        MIN(createdat) AS member_since
+      FROM urls
+      WHERE userid = $1
+    `;
+
+      const result = await db.query(query, [userId]);
+      const row = result.rows[0];
+
+      return {
+        totalUrls: parseInt(row.total_urls),
+        totalClicks: parseInt(row.total_clicks),
+        memberSince: row.member_since,
+      };
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      throw new Error("Failed to fetch stats");
+    }
+  }
+  
   // Create shortened URL with optional custom code
   static async create(longUrl, userId = null, customCode = null) {
     let shortUrl = customCode;
