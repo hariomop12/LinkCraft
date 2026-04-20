@@ -94,7 +94,7 @@ function Dashboard() {
     ],
   );
 
-   const fetchStats = useCallback(async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const res = await fetch(`${backendUrl}/api/url/stats`, {
         headers: { Authorization: `Bearer ${token}` },
